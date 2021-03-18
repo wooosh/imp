@@ -1,14 +1,14 @@
 // #pragma once
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
 #include <imp.h>
 
-void callback(void* filename, size_t line, size_t argc, char **argv) {
+void callback(void *filename, size_t line, size_t argc, char **argv) {
   printf("%s:%zu: ", filename, line);
   for (int i = 0; i < argc; i++) {
     printf(" %s", argv[i]);
@@ -26,11 +26,12 @@ void main(int argc, char **argv) {
   struct imp_parser p = imp_init(callback, argv[1], f);
 
   enum imp_error err;
-  while ((err = imp_next_command(&p)) == imp_success) {};
+  while ((err = imp_next_command(&p)) == imp_success) {
+  };
 
   if (err != imp_eof) {
     printf("%s:%d: %s\n", argv[1], p.line_num, imp_error_str[err]);
   }
 
-  imp_destroy(&p); 
+  imp_destroy(&p);
 }
