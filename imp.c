@@ -14,8 +14,8 @@ char *imp_error_str[] = {
   [imp_unexpected_bracket] = "Unexpected Bracket"
 };
 
-struct imp_parser imp_init(imp_command_callback callback, FILE* stream) {
-  struct imp_parser p = { callback, stream };
+struct imp_parser imp_init(imp_command_callback callback, void* payload, FILE* stream) {
+  struct imp_parser p = { callback, payload, stream };
 
   p._levels = malloc(sizeof(size_t));
   p._levels_cap = 1;
@@ -24,6 +24,13 @@ struct imp_parser imp_init(imp_command_callback callback, FILE* stream) {
   p._levels_len = 1;
 
   return p;
+}
+
+void imp_destroy(struct imp_parser *p) {
+  free(p->_levels);
+  free(p->_argv);
+  free(p->_line);
+  fclose(p->stream);
 }
 
 // TODO: split into multiple functions
@@ -89,7 +96,7 @@ enum imp_error imp_next_command(struct imp_parser *p) {
     token = strtok_r(NULL, " ", &save_ptr);
   }
   
-  p->callback(argc, p->_argv);
+  p->callback(p->payload, p->line_num, argc, p->_argv);
   
   for (int i=p->_levels[p->_levels_len-1]; i<argc; i++) {
     free(p->_argv[i]);

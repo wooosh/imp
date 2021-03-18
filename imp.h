@@ -8,7 +8,7 @@
 
 // TODO: should take payload
 // TODO: should take line number
-typedef void (*imp_command_callback)(size_t argc, char **argv);
+typedef void (*imp_command_callback)(void* payload, size_t line, size_t argc, char **argv);
 
 enum imp_error {
   imp_success = 0,
@@ -23,6 +23,7 @@ extern char *imp_error_str[];
 
 struct imp_parser {
   imp_command_callback callback;
+  void *payload;
   FILE *stream;
   size_t line_num; // read only
   
@@ -38,7 +39,7 @@ struct imp_parser {
   size_t _line_cap;
 };
 
-struct imp_parser imp_destroy();
-struct imp_parser imp_init(imp_command_callback callback, FILE* stream);
+void imp_destroy(struct imp_parser *p);
+struct imp_parser imp_init(imp_command_callback callback, void *payload, FILE* stream);
 enum imp_error imp_next_command(struct imp_parser *p);
 
