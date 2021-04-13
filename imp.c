@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <imp.h>
+#include "imp.h"
 
 char *imp_error_str[] = {[imp_success] = "Success",
                          [imp_eof] = "EOF",
@@ -54,7 +54,6 @@ static void add_arg(struct imp_parser *p, size_t *argc, char *arg) {
   (*argc)++;
 }
 
-// TODO: split into multiple functions
 enum imp_error imp_next_command(struct imp_parser *p) {
   ssize_t len;
   len = getline(&p->_line, &p->_line_cap, p->stream);
@@ -88,7 +87,7 @@ enum imp_error imp_next_command(struct imp_parser *p) {
     if (token[0] == '#')
       break;
 
-    // TODO: check for arguments or characters
+    // TODO: check for arguments or characters after
     if (token[0] == '{') {
       push_level(p, argc);
       return imp_next_command(p);
